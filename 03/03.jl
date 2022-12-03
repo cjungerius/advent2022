@@ -4,8 +4,7 @@ function partone(input)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
     for line in input
-        l = length(line)
-        commonitem = Set(line[1:l÷2]) ∩ Set(line[l÷2+1:end])
+        commonitem = Set(line[1:end÷2]) ∩ Set(line[end÷2+1:end])
         prioritysum += priorities[pop!(commonitem)]
     end
     prioritysum
