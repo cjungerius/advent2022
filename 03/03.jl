@@ -1,6 +1,6 @@
 input = readlines("input.txt")
 
-function partone(input)
+function commoncompartment(input)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
     for line in input
@@ -10,7 +10,7 @@ function partone(input)
     prioritysum
 end
 
-function parttwo(input)
+function findbadge(input)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
 
@@ -22,3 +22,5 @@ function parttwo(input)
     end
     prioritysum
 end
+
+partone, parttwo = commoncompartment(input), findbadge(input)
