@@ -1,0 +1,17 @@
+(require :uiop)
+(defvar input (uiop:read-file-lines "01/input.txt"))
+
+(defun dayone (input)
+  (let ((elves (list 0)))
+    (dolist (x input)
+      (if (> (length x) 0)
+          (incf (car elves) (parse-integer x))
+          (push 0 elves))
+      )
+    (sort elves #'>)
+    (format t "part one: ~d~%" (car elves))
+    (format t "part two: ~d~%" (apply '+ (subseq elves 0 3)))
+    )
+  )
+
+(dayone input)
