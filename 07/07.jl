@@ -4,7 +4,7 @@ input = split.(input, " ")
 function findspace(input::Vector)
 
     #build our dictionary of paths and contents
-    filesys = Dict{String,Array{Union{Int,String},1}}()
+    filesys = Dict{String,Vector{Union{Int,String}}}()
     path = ""
 
     for line in input[2:end]
@@ -22,7 +22,7 @@ function findspace(input::Vector)
     sizes = Int[]
 
     #function to traverse the path recursively and save all directory sizes
-    function getvalue(dir::String, filesys::Dict, sizes::Array)
+    function getvalue(dir::String, filesys::Dict, sizes::Vector{Int})
         total = 0
         for f in filesys[dir]
             f isa Number ? total += f : total += getvalue(f, filesys, sizes)
@@ -32,12 +32,12 @@ function findspace(input::Vector)
     end
 
     #call the function
-    getvalue("", filesys, sizes)
+    totalsize = getvalue("", filesys, sizes)
 
     #and finally get our solutions
     partone = sum([x ≤ 100000 ? x : 0 for x in sizes])
 
-    target = sizes[end] - 40000000
+    target = totalsize - 40000000
     parttwo = minimum(filter(x -> x ≥ target, sizes))
 
     partone, parttwo
