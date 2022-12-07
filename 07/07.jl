@@ -3,7 +3,6 @@ input = split.(input, " ")
 
 dirs = []
 contents = []
-cwd = "/"
 path = ""
 
 for line in input[2:end]
@@ -24,15 +23,20 @@ for line in input[2:end]
 end
 
 filesys = Dict(dirs .=> contents)
-visited = []
+sizes = Dict(dirs.=> 0)
 
-function getvalue(dir, filesys, visited)
+function getvalue(dir, filesys, sizes)
     total = 0
         for f in filesys[dir]
-            f isa Number ? total += f : total += getvalue(f,filesys, visited)
+            f isa Number ? total += f : total += getvalue(f,filesys, sizes)
         end
-    push!(visited,(dir, total))
+    sizes[dir] = total
     total 
 end
 
 
+partone = sum([x ≤ 100000 ? x : 0 for x in values(sizes)])
+
+target = sizes[""] - 40000000
+
+minimum(filter(x -> x ≥ target, collect(values(sizes))))
