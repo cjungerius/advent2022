@@ -1,42 +1,44 @@
 input = readlines("input.txt")
 input = split.(input, " ")
 
-dirs = []
-contents = []
-path = ""
+function findspace(input::Vector)
 
-for line in input[2:end]
-    if line[2]=="cd" 
-        if line[3] != ".."
-            path = joinpath(path, line[3])
+    #build our dictionary of paths and contents
+    filesys = Dict{String,Array{Union{Int,String},1}}()
+    path = ""
+
+    for line in input[2:end]
+        if line[1] == "\$"
+            if line[2] == "cd"
+                line[3] != ".." ? (path = joinpath(path, line[3])) : (path = splitdir(path)[1])
+            else #if line[2]=="ls"
+                filesys[path] = Union{Int,String}[]
+            end
         else
-            path = splitdir(path)[1]
+            line[1] == "dir" ? push!(filesys[path], joinpath(path, line[2])) : push!(filesys[path], parse(Int, line[1]))
         end
-    elseif line[2]=="ls"
-        push!(dirs, path)
-        push!(contents,[])
-    elseif line[1]=="dir"
-        push!(contents[end],joinpath(path,line[2]))
-    else
-        push!(contents[end],parse(Int,line[1]))
     end
-end
 
-filesys = Dict(dirs .=> contents)
-sizes = Dict(dirs.=> 0)
+    sizes = Int[]
 
-function getvalue(dir, filesys, sizes)
-    total = 0
+    #function to traverse the path recursively and save all directory sizes
+    function getvalue(dir::String, filesys::Dict, sizes::Array)
+        total = 0
         for f in filesys[dir]
-            f isa Number ? total += f : total += getvalue(f,filesys, sizes)
+            f isa Number ? total += f : total += getvalue(f, filesys, sizes)
         end
-    sizes[dir] = total
-    total 
+        push!(sizes, total)
+        total
+    end
+
+    #call the function
+    getvalue("", filesys, sizes)
+
+    #and finally get our solutions
+    partone = sum([x ≤ 100000 ? x : 0 for x in sizes])
+
+    target = sizes[end] - 40000000
+    parttwo = minimum(filter(x -> x ≥ target, sizes))
+
+    partone, parttwo
 end
-
-
-partone = sum([x ≤ 100000 ? x : 0 for x in values(sizes)])
-
-target = sizes[""] - 40000000
-
-minimum(filter(x -> x ≥ target, collect(values(sizes))))
