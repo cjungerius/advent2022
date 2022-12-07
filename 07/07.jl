@@ -42,3 +42,5 @@ function findspace(input::Vector)
 
     partone, parttwo
 end
+
+partone, parttwo = findspace(input)
