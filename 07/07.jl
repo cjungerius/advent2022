@@ -1,10 +1,10 @@
 input = readlines("input.txt")
 input = split.(input, " ")
 
-function findspace(input::Vector)
+function findspace(input::Vector)::Tuple{Int,Int}
 
     filesys = Dict{String,Int}()
-    path = "root"
+    path::String = "root"
     stack = String[]
     
     for line in input[2:end]
@@ -12,7 +12,7 @@ function findspace(input::Vector)
             if line[2] == "cd"
                 if line[3] != ".." 
                     push!(stack,path)
-                    path = joinpath(path, line[3])
+                    path *= "/" * line[3]
                 else 
                     filesys[stack[end]] += filesys[path]
                     path = pop!(stack)
@@ -35,10 +35,10 @@ function findspace(input::Vector)
 
     partone = sum([x ≤ 100000 ? x : 0 for x in sizes])
 
-    target = maximum(sizes) - 40000000
+    target = filesys["root"] - 40000000
     parttwo = minimum(filter(x -> x ≥ target, sizes))
 
-    partone, parttwo
+    (partone, parttwo)
 end
 
 partone, parttwo = findspace(input)
