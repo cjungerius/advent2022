@@ -7,7 +7,7 @@ function getsignal(input)
         if line[1] == "noop"
             push!(signal, x)
         else
-            push!(signal, repeat([x], 2)...)
+            push!(signal, x, x)
             x += parse(Int, line[2])
         end
     end
