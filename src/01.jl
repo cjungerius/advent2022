@@ -1,8 +1,12 @@
 module Day01
 
-input = readlines("input.txt")
+export day01
 
-function calories(input)
+using Advent2022
+
+#input = readlines("input.txt")
+
+function day01(input)
 
     input = tryparse.(Int, input)
     elves = [0]
@@ -18,10 +22,7 @@ function calories(input)
     maxvals = partialsort!(elves,1:3,rev=true)
     partone = maxvals[1]
     parttwo = sum(maxvals)
-
-    (partone, parttwo)
+    partone, parttwo
 end
-
-partone, parttwo = calories(input)
 
 end
