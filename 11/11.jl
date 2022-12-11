@@ -22,7 +22,7 @@ function Monkey(input::Vector{String})::Monkey
     truemonkey = parse(Int, match(nummatch, input[5])[1]) + 1
     falsemonkey = parse(Int, match(nummatch, input[6])[1]) + 1
 
-    m = Monkey(items, op, oparg, modtest, truemonkey, falsemonkey, 0)
+    Monkey(items, op, oparg, modtest, truemonkey, falsemonkey, 0)
 end
 
 function makemonkeys(input)
