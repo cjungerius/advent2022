@@ -2,8 +2,6 @@ module Day01
 
 function solve(io::IO)
 
-    #input = tryparse.(Int, input)
-
     elves = Int[0]
     x::Union{Nothing,Int} = nothing
 
@@ -17,9 +15,11 @@ function solve(io::IO)
     end
 
     maxvals = partialsort!(elves,1:3,rev=true)
+    maxvals[1], sum(maxvals[1:3])
 end
 
-partone(io::IO=open("data/01.txt")) = solve(io)[1]
-parttwo(io::IO=open("data/01.txt")) = sum(solve(io))
+function solutions(io::String="data/01.txt")
+    partone, parttwo = solve(open(io))
+end
 
 end

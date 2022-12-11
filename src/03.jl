@@ -29,7 +29,10 @@ function findbadge(io::IO)
     prioritysum
 end
 
-partone(io::IO=open("data/03.txt")) = commoncompartment(io)
-parttwo(io::IO=open("data/03.txt")) = findbadge(io)
+function solutions(io::String="data/03.txt")
+    partone = commoncompartment(open(io)) 
+    parttwo = findbadge(open(io))
+partone,parttwo
+end
 
 end

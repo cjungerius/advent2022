@@ -35,7 +35,8 @@ function solve(io::IO)
     partone, parttwo
 end
 
-partone(io::IO=open("data/02.txt")) = solve(io)[1]
-parttwo(io::IO=open("data/02.txt")) = solve(io)[2]
+function solutions(io::String="data/02.txt")
+    partone, parttwo = solve(open(io))
+end
 
 end
