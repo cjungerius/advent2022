@@ -1,7 +1,6 @@
-using DelimitedFiles
-input = readdlm("input.txt")
+module Day02
 
-function scorerps(input)
+function solve(io::IO)
 
     #possible outcomes: each letter in the left column gives a given score for losing to it, tying it or beating it
 
@@ -25,14 +24,18 @@ function scorerps(input)
     partone = 0
     parttwo = 0
 
-    for i in 1:size(input)[1]
-        x = oppdict[input[i, 1]]
-        y = playerdict[input[i, 2]]
+    for (i, line) in enumerate(eachline(io))
+        a, b = split(line)
+        x = oppdict[a]
+        y = playerdict[b]
         partone += partonemat[x, y]
         parttwo += parttwomat[x, y]
     end
 
-    (partone, parttwo)
+    partone, parttwo
 end
 
-partone, parttwo = scorerps(input)
+partone(io::IO=open("data/02.txt")) = solve(io)[1]
+parttwo(io::IO=open("data/02.txt")) = solve(io)[2]
+
+end

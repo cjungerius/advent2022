@@ -1,10 +1,9 @@
-input = readlines("input.txt")
+module Day04
 
 
 function sectionoverlaps(input)
 
     overlaps = 0
-    fulloverlaps = 0
 
     for line in input
         m = split(line, [',', '-'])
@@ -21,3 +20,5 @@ function sectionoverlaps(input)
 end
 
 partone, parttwo = sectionoverlaps(input)
+
+end

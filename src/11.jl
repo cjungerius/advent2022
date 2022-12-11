@@ -1,4 +1,4 @@
-input = readlines("input.txt")
+module Day11
 
 mutable struct Monkey
     items::Vector{Int}
@@ -10,7 +10,7 @@ mutable struct Monkey
     businesscount::Int
 end
 
-function Monkey(input::Vector{String})::Monkey
+function Monkey(input)::Monkey
     nummatch = r"([0-9]+)"
     opmatch = r"(\*|\+)"
 
@@ -25,22 +25,27 @@ function Monkey(input::Vector{String})::Monkey
     Monkey(items, op, oparg, modtest, truemonkey, falsemonkey, 0)
 end
 
-function makemonkeys(input)
-    monkeystarts = findall(x -> length(x) == 0, input)
-    monkeystarts .+= 1
-    pushfirst!(monkeystarts, 1)
-
+function makemonkeys(io::IO)
     monkeys = Monkey[]
-    for i in monkeystarts
-        monkey = Monkey(input[i:i+5])
-        push!(monkeys, monkey)
+    input = String[]
+    for line in eachline(io)
+    
+
+        if length(line) > 0 
+            push!(input,line)
+        else
+            push!(monkeys, Monkey(input))
+            input = String[]
+        end
     end
+    push!(monkeys, Monkey(input))
+
     monkeys
 end
 
-function monkeybusiness(input, n; worry=false)
+function monkeybusiness(io::IO, n, worry=false)
 
-    monkeys = makemonkeys(input)
+    monkeys = makemonkeys(io::IO)
     opdict = Dict(["*", "+"] .=> [*, +])
 
     # item % lowest common multiple behaves the same for all tests as the original number, so:
@@ -63,4 +68,8 @@ function monkeybusiness(input, n; worry=false)
     business[1] * business[2]
 end
 
-partone, parttwo = monkeybusiness(input, 20), monkeybusiness(input, 10000, worry=true)
+
+partone(io::IO=open("data/11.txt")) = monkeybusiness(io,20)
+parttwo(io::IO=open("data/11.txt")) = monkeybusiness(io,10000,true)
+
+end
