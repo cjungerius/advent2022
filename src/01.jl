@@ -1,3 +1,5 @@
+module Day01
+
 input = readlines("input.txt")
 
 function calories(input)
@@ -21,3 +23,5 @@ function calories(input)
 end
 
 partone, parttwo = calories(input)
+
+end
