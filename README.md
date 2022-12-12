@@ -10,7 +10,7 @@ of Code 2022
 
 Solving Advent of Code 2022 using Julia
 
-| \[1m Day \[0m | \[1m Time \[0m | \[1m Memory \[0m |
+|  Day  | Time |  Memory  |
 |---------------|----------------|------------------|
-| 1             | 199.500 μs     | 55.30 KiB        |
-| 2             | 526.800 μs     | 725.30 KiB       |
+| 1             | 199.600 μs     | 55.30 KiB        |
+| 2             | 524.500 μs     | 725.30 KiB       |

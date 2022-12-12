@@ -18,7 +18,7 @@ using Advent2022
 using BenchmarkTools
 using PrettyTables
 
-conf = set_pt_conf(tf = tf_markdown, alignment = :c)
+conf = set_pt_conf(tf = tf_markdown)
 
 bscores = Advent2022.benchmark()
 
