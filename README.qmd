@@ -1,0 +1,36 @@
+---
+title: "Advent2022.jl"
+author: "Chris Jungerius"
+date: "12/12/2022"
+jupyter: julia-1.8
+format: gfm
+---
+
+![](https://img.shields.io/badge/day%20📅-22-blue) ![](https://img.shields.io/badge/stars%20⭐-22-yellow) ![](https://img.shields.io/badge/days%20completed-17-red)\
+
+Solving Advent of Code 2022 using Julia
+
+```{julia}
+#| echo: false
+#| output: asis
+ 
+using Advent2022
+using BenchmarkTools
+
+bresults = Advent2022.benchmark()
+
+function _to_markdown_table(bresults)
+    header = "| Day | Time | Allocated memory |\n" *
+             "|----:|-----:|-----------------:|"
+    lines = [header]
+    for (d, t, m) in bresults
+        ds = string(d)
+        ts = BenchmarkTools.prettytime(t)
+        ms = BenchmarkTools.prettymemory(m)
+        push!(lines, "| $ds | $ts | $ms |")
+    end
+    return join(lines, "\n")    
+end
+
+print(_to_markdown_table(bresults))
+```
