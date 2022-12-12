@@ -11,8 +11,20 @@ format: gfm
 
 Solving Advent of Code 2022 using Julia
 
-```{julia}
+```{julia echo=false}
 using Advent2022
+using BenchmarkTools
+using PrettyTables
 
-Advent2022.benchmark()
+conf = set_pt_conf(tf = tf_markdown, alignment = :c)
+
+bscores = Advent2022.benchmark()
+
+header = ["Day", "Time", "Memory"]
+data = map(bscores) do (d, t, m)
+    [d, BenchmarkTools.prettytime(t), BenchmarkTools.prettymemory(m)]
+    end
+data = permutedims(hcat(data...))
+
+pretty_table_with_conf(conf, data; header = header)
 ```

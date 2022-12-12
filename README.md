@@ -1,4 +1,4 @@
-README
+Advent2022.jl
 ================
 Chris Jungerius
 12/12/2022
@@ -12,19 +12,23 @@ Solving Advent of Code 2022 using Julia
 
 ``` julia
 using Advent2022
+using BenchmarkTools
+using PrettyTables
 
-Advent2022.benchmark()
+conf = set_pt_conf(tf = tf_markdown, alignment = :c)
+
+bscores = Advent2022.benchmark()
+
+header = ["Day", "Time", "Memory"]
+data = map(bscores) do (d, t, m)
+    [d, BenchmarkTools.prettytime(t), BenchmarkTools.prettymemory(m)]
+    end
+data = permutedims(hcat(data...))
+
+pretty_table_with_conf(conf, data; header = header)
 ```
 
-    11-element Vector{Any}:
-     (1, 200900.0, 56624)
-     (2, 519200.0, 742712)
-     (3, 708500.0, 923512)
-     (4, 486500.0, 368696)
-     (5, 953200.0, 688048)
-     (6, 590800.0, 1387832)
-     (7, 340600.0, 371360)
-     (8, 2.2491e6, 2346096)
-     (9, 1.4161e6, 1059848)
-     (10, 54000.0, 129504)
-     (11, 9.4921e7, 30118064)
+    | Day |    Time    |   Memory   |
+    |-----|------------|------------|
+    |  1  | 199.200 μs | 55.30 KiB  |
+    |  2  | 525.400 μs | 725.30 KiB |
