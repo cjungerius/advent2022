@@ -19,7 +19,7 @@ function sectionoverlaps(io::IO)
     fulloverlaps, overlaps
 end
 
-function solutions(io::String="data/04.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "04.txt"))
     partone, parttwo = sectionoverlaps(open(io))
 end
 

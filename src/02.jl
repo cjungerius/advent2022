@@ -35,7 +35,7 @@ function solve(io::IO)
     partone, parttwo
 end
 
-function solutions(io::String="data/02.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "02.txt"))
     partone, parttwo = solve(open(io))
 end
 

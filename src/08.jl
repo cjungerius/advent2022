@@ -84,7 +84,7 @@ function scenicscore(io::IO)
     scenicscore(input)
 end
 
-function solutions(io::String="data/08.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "08.txt"))
     input = preprocess(open(io))
     partone = visible(input)
     parttwo = scenicscore(input)

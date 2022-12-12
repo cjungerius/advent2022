@@ -70,7 +70,7 @@ function bfs(io::IO)
     partone, parttwo
 end
 
-function solutions(io::String="data/12.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "12.txt"))
     partone, parttwo = bfs(open(io))
 end
 

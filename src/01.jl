@@ -18,7 +18,7 @@ function solve(io::IO)
     maxvals[1], sum(maxvals[1:3])
 end
 
-function solutions(io::String="data/01.txt")
+function solutions(io::String= joinpath(@__DIR__, "..", "data", "01.txt"))
     partone, parttwo = solve(open(io))
 end
 

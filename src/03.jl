@@ -28,7 +28,7 @@ function findbadge(io::IO)
     prioritysum
 end
 
-function solutions(io::String="data/03.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "03.txt"))
     partone = commoncompartment(open(io))
     parttwo = findbadge(open(io))
     partone, parttwo
