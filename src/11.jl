@@ -46,7 +46,7 @@ end
 function monkeybusiness(io::IO, n, worry=false)
 
     monkeys = makemonkeys(io::IO)
-    opdict = Dict(["*", "+"] .=> [*, +])
+    opdict = Dict{String,Function}(["*", "+"] .=> [*, +])
 
     # item % lowest common multiple behaves the same for all tests as the original number, so:
     worrymod = lcm([m.modtest for m in monkeys]...)
@@ -55,9 +55,10 @@ function monkeybusiness(io::IO, n, worry=false)
         for m in monkeys
             while !isempty(m.items)
                 item = popfirst!(m.items)
-                m.oparg == 0 ? item = opdict[m.opkey](item, item) : item = opdict[m.opkey](item, m.oparg)
+                item = m.oparg == 0 ? opdict[m.opkey](item, item) : opdict[m.opkey](item, m.oparg)
                 worry ? item %= worrymod : item ÷= 3
-                mod(item, m.modtest) == 0 ? push!(monkeys[m.truemonkey].items, item) : push!(monkeys[m.falsemonkey].items, item)
+                target = mod(item, m.modtest) == 0 ? m.truemonkey : m.falsemonkey
+                push!(monkeys[target].items, item)
                 m.businesscount += 1
             end
         end
