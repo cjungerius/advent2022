@@ -69,7 +69,7 @@ function monkeybusiness(io::IO, n, worry=false)
     business[1] * business[2]
 end
 
-function solutions(io::String="data/11.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "11.txt"))
 
     partone = monkeybusiness(open(io), 20)
     parttwo = monkeybusiness(open(io), 10000, true)

@@ -40,7 +40,7 @@ function cargocrane(io::IO, new=false)
     *([s[end] for s in stacks]...)
 end
 
-function solutions(io::String="data/05.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "05.txt"))
     partone = cargocrane(open(io))
     parttwo = cargocrane(open(io), true)
     partone, parttwo

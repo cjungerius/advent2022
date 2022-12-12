@@ -7,7 +7,7 @@ function findmarker(io::IO, n)
     end
 end
 
-function solutions(io::String="data/06.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "06.txt"))
     partone, parttwo = findmarker(open(io), 4), findmarker(open(io), 14)
 end
 

@@ -25,7 +25,7 @@ function getsignal(io::IO)
     partone, parttwo
 end
 
-function solutions(io::String="data/10.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "10.txt"))
     partone, parttwo = getsignal(open(io))
 end
 

@@ -35,7 +35,7 @@ function longropephysics(io::IO)
     (length(visitedone), length(visitedtwo))
 end
 
-function solutions(io::String="data/09.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "09.txt"))
     partone, parttwo = longropephysics(open(io))
 end
 

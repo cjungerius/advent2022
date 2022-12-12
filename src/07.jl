@@ -42,7 +42,7 @@ function findspace(io::IO)::Tuple{Int,Int}
     partone, parttwo
 end
 
-function solutions(io::String="data/07.txt")
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "07.txt"))
     partone, parttwo = findspace(open(io))
 end
 
