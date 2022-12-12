@@ -6,7 +6,6 @@ function preprocess(io::IO)
 
     input = []
 
-
     for line in eachline(io)
         push!(input,[c for c in line])
     end
@@ -31,7 +30,6 @@ function bfs(io::IO)
 
     input = preprocess(io)
     distance = fill(Inf,size(input))
-    visited = fill(false,size(input))
 
     elevationDict = Dict(['a':'z'...] .=> [1:26...])
     elevationDict['S'] = 1
@@ -43,7 +41,6 @@ function bfs(io::IO)
     goaltwo = findall(x->x=='a', input)
 
     distance[start] = 0
-    visited[start] = true
     q = Queue{CartesianIndex}()
     enqueue!(q,start)
 
@@ -56,9 +53,8 @@ function bfs(io::IO)
             # this is the only thing you have to change to go backwards: we invert the rule about elevation
             b < (a-1) && continue
             dist = distance[u]+1
-            distance[n] = min(dist,distance[n])
-            if !visited[n]
-                visited[n] = true
+            if !isfinite(distance[n])
+                distance[n] = dist
                 enqueue!(q,n)
             end
         end
