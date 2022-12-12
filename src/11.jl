@@ -29,10 +29,10 @@ function makemonkeys(io::IO)
     monkeys = Monkey[]
     input = String[]
     for line in eachline(io)
-    
 
-        if length(line) > 0 
-            push!(input,line)
+
+        if length(line) > 0
+            push!(input, line)
         else
             push!(monkeys, Monkey(input))
             input = String[]
@@ -68,8 +68,12 @@ function monkeybusiness(io::IO, n, worry=false)
     business[1] * business[2]
 end
 
+function solutions(io::String="data/11.txt")
 
-partone(io::IO=open("data/11.txt")) = monkeybusiness(io,20)
-parttwo(io::IO=open("data/11.txt")) = monkeybusiness(io,10000,true)
+    partone = monkeybusiness(open(io), 20)
+    parttwo = monkeybusiness(open(io), 10000, true)
+
+    partone, parttwo
+end
 
 end

@@ -1,6 +1,5 @@
 module Day03
 
-
 function commoncompartment(io::IO)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
@@ -17,12 +16,12 @@ function findbadge(io::IO)
     input = String[]
 
     for line in eachline(io)
-        if length(input) == 3    
+        if length(input) == 3
             commonitem = Set(input[1]) ∩ Set(input[2]) ∩ Set(input[3])
             prioritysum += priorities[pop!(commonitem)]
             input = String[line]
         else
-        push!(input,line)
+            push!(input, line)
         end
 
     end
@@ -30,9 +29,9 @@ function findbadge(io::IO)
 end
 
 function solutions(io::String="data/03.txt")
-    partone = commoncompartment(open(io)) 
+    partone = commoncompartment(open(io))
     parttwo = findbadge(open(io))
-partone,parttwo
+    partone, parttwo
 end
 
 end

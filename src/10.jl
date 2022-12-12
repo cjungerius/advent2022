@@ -1,14 +1,15 @@
-input = split.(readlines("input.txt"))
+module Day10
 
-function getsignal(input)
+function getsignal(io::IO)
     x = 1
     signal = Int[]
-    for line in input
-        if line[1] == "noop"
+    for line in eachline(io)
+
+        if line[1] == 'n'
             push!(signal, x)
         else
             push!(signal, x, x)
-            x += parse(Int, line[2])
+            x += parse(Int, line[6:end])
         end
     end
 
@@ -24,5 +25,8 @@ function getsignal(input)
     partone, parttwo
 end
 
-partone, parttwo = getsignal(input)
-print(parttwo)
+function solutions(io::String="data/10.txt")
+    partone, parttwo = getsignal(open(io))
+end
+
+end

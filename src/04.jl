@@ -1,11 +1,10 @@
 module Day04
 
-
 function sectionoverlaps(io::IO)
 
     overlaps = 0
     fulloverlaps = 0
-    
+
     for line in eachline(io)
         m = split(line, [',', '-'])
         a = parse(Int, m[1]):parse(Int, m[2])

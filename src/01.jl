@@ -6,7 +6,7 @@ function solve(io::IO)
     x::Union{Nothing,Int} = nothing
 
     for line in eachline(io)
-        x = tryparse(Int,line;base=10)
+        x = tryparse(Int, line; base=10)
         if !isnothing(x)
             elves[end] += x
         else
@@ -14,7 +14,7 @@ function solve(io::IO)
         end
     end
 
-    maxvals = partialsort!(elves,1:3,rev=true)
+    maxvals = partialsort!(elves, 1:3, rev=true)
     maxvals[1], sum(maxvals[1:3])
 end
 

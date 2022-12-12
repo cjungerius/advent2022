@@ -1,11 +1,12 @@
+module Day08
 
 using Pipe: @pipe
 
-function preprocess(input)
-    @pipe input |> split.(_, "") |> [parse.(Int, line) for line in _] |> vcat(transpose.(_)...)
+function preprocess(io::IO)
+    input = readlines(io)
+    output = @pipe input |> split.(_, "") |> [parse.(Int, line) for line in _] |> vcat(transpose.(_)...)
+    output
 end
-
-input = preprocess(readlines("input.txt"))
 
 function visible(input)
 
@@ -73,4 +74,21 @@ function scenicscore(input)
     maximum(scoremat)
 end
 
-partone, parttwo = (visible(input), scenicscore(input))
+function visible(io::IO)
+    input = preprocess(io)
+    visible(input)
+end
+
+function scenicscore(io::IO)
+    input = preprocess(io)
+    scenicscore(input)
+end
+
+function solutions(io::String="data/08.txt")
+    input = preprocess(open(io))
+    partone = visible(input)
+    parttwo = scenicscore(input)
+    partone, parttwo
+end
+
+end

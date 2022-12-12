@@ -1,12 +1,11 @@
-input = readlines("input.txt")
+module Day05
 
-function createstacks(input)
+function createstacks(stackinput)
 
-    stacklocs = [2:4:length(input[1])...]
+    stacklocs = [2:4:length(stackinput[1])...]
     stacks = [[] for i in 1:length(stacklocs)]
-    stackinput = input[end:-1:1]
 
-    for level in stackinput
+    for level in reverse(stackinput)
         for (i, loc) in enumerate(stacklocs)
             isletter(level[loc]) && push!(stacks[i], level[loc])
         end
@@ -15,33 +14,36 @@ function createstacks(input)
     stacks
 end
 
-function cargocrane(input)
-    
-    splitidx = findfirst(x->length(x)==0, input)
-    stacks = createstacks(input[1:splitidx-1])
+function cargocrane(io::IO, new=false)
 
-    for instruction in input[splitidx+1:end]
+    stackinput = String[]
+
+    for line in eachline(io)
+        length(line) == 0 && break
+        push!(stackinput, line)
+    end
+
+    stacks = createstacks(stackinput)
+
+    for instruction in eachline(io)
         n, source, dest = filter(!isnothing, tryparse.(Int, split(instruction, " ")))
-        for i in 1:n
-            push!(stacks[dest], pop!(stacks[source]))
+        if new
+            push!(stacks[dest],
+                splice!(stacks[source], length(stacks[source])-n+1:length(stacks[source]))...)
+        else
+            for i in 1:n
+                push!(stacks[dest], pop!(stacks[source]))
+            end
         end
     end
 
     *([s[end] for s in stacks]...)
 end
 
-function newcargocrane(input)
-    
-    splitidx = findfirst(x->length(x)==0, input)
-    stacks = createstacks(input[1:splitidx-1])
-
-    for instruction in input[splitidx+1:end]
-       n, source, dest = filter(!isnothing, tryparse.(Int, split(instruction, " ")))
-        push!(stacks[dest],
-            splice!(stacks[source], length(stacks[source])-n+1:length(stacks[source]))...)
-    end
-
-    *([s[end] for s in stacks]...)
+function solutions(io::String="data/05.txt")
+    partone = cargocrane(open(io))
+    parttwo = cargocrane(open(io), true)
+    partone, parttwo
 end
 
-partone, parttwo = (cargocrane(input), newcargocrane(input))
+end

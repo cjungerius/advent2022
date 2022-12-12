@@ -1,9 +1,14 @@
-input = readline("input.txt")
+module Day06
 
-function findmarker(input,n)
+function findmarker(io::IO, n)
+    input = readline(io)
     for i in 1:length(input)-n+1
-        allunique(input[i:i+n-1]) && return i+n-1
+        allunique(input[i:i+n-1]) && return i + n - 1
     end
 end
 
-partone, parttwo = findmarker(input, 4), findmarker(input, 14)
+function solutions(io::String="data/06.txt")
+    partone, parttwo = findmarker(open(io), 4), findmarker(open(io), 14)
+end
+
+end

@@ -1,17 +1,17 @@
-using Pipe: @pipe
+module Day09
 
-input = @pipe readlines("input.txt") |> split.(_, " ") |> map(x -> [x[1], parse(Int, x[2])], _)
-
-function longropephysics(input)
+function longropephysics(io::IO)
     x = ones(Int, 10)
     y = ones(Int, 10)
 
     visitedone = Set([(1, 1)])
     visitedtwo = Set([(1, 1)])
 
-    for (dir, steps) in input
+    for line in eachline(io)
 
-        for i in 1:steps
+        dir, steps = split(line)
+
+        for i in 1:parse(Int, steps)
             dir == "U" && (y[1] += 1)
             dir == "D" && (y[1] -= 1)
             dir == "R" && (x[1] += 1)
@@ -35,4 +35,9 @@ function longropephysics(input)
     (length(visitedone), length(visitedtwo))
 end
 
-partone, parttwo = longropephysics(input)
+function solutions(io::String="data/09.txt")
+    partone, parttwo = longropephysics(open(io))
+end
+
+
+end

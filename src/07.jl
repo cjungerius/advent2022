@@ -1,19 +1,20 @@
-input = readlines("input.txt")
-input = split.(input, " ")
+module Day07
 
-function findspace(input::Vector)::Tuple{Int,Int}
+function findspace(io::IO)::Tuple{Int,Int}
 
     filesys = Dict{String,Int}()
     path::String = "root"
     stack = String[]
-    
-    for line in input[2:end]
+
+    for line in eachline(io)
+        line = split(line)
+
         if line[1] == "\$"
             if line[2] == "cd"
-                if line[3] != ".." 
-                    push!(stack,path)
-                    path *= "/" * line[3]
-                else 
+                if line[3] != ".."
+                    push!(stack, path)
+                    line[3] == "/" || (path *= "/" * line[3])
+                else
                     filesys[stack[end]] += filesys[path]
                     path = pop!(stack)
                 end
@@ -21,7 +22,7 @@ function findspace(input::Vector)::Tuple{Int,Int}
                 filesys[path] = 0
             end
         else
-            line[1] != "dir" && (filesys[path] += parse(Int,line[1]))
+            line[1] != "dir" && (filesys[path] += parse(Int, line[1]))
         end
     end
 
@@ -30,7 +31,7 @@ function findspace(input::Vector)::Tuple{Int,Int}
         filesys[stack[end]] += filesys[path]
         path = pop!(stack)
     end
-    
+
     sizes = collect(values(filesys))
 
     partone = sum([x ≤ 100000 ? x : 0 for x in sizes])
@@ -38,7 +39,11 @@ function findspace(input::Vector)::Tuple{Int,Int}
     target = filesys["root"] - 40000000
     parttwo = minimum(filter(x -> x ≥ target, sizes))
 
-    (partone, parttwo)
+    partone, parttwo
 end
 
-partone, parttwo = findspace(input)
+function solutions(io::String="data/07.txt")
+    partone, parttwo = findspace(open(io))
+end
+
+end
