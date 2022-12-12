@@ -10,25 +10,7 @@ of Code 2022
 
 Solving Advent of Code 2022 using Julia
 
-``` julia
-using Advent2022
-using BenchmarkTools
-using PrettyTables
-
-conf = set_pt_conf(tf = tf_markdown, alignment = :c)
-
-bscores = Advent2022.benchmark()
-
-header = ["Day", "Time", "Memory"]
-data = map(bscores) do (d, t, m)
-    [d, BenchmarkTools.prettytime(t), BenchmarkTools.prettymemory(m)]
-    end
-data = permutedims(hcat(data...))
-
-pretty_table_with_conf(conf, data; header = header)
-```
-
-    | Day |    Time    |   Memory   |
-    |-----|------------|------------|
-    |  1  | 199.200 μs | 55.30 KiB  |
-    |  2  | 525.400 μs | 725.30 KiB |
+| \[1m Day \[0m | \[1m Time \[0m | \[1m Memory \[0m |
+|---------------|----------------|------------------|
+| 1             | 199.500 μs     | 55.30 KiB        |
+| 2             | 526.800 μs     | 725.30 KiB       |
