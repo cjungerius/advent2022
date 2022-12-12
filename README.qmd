@@ -6,27 +6,31 @@ jupyter: julia-1.8
 format: gfm
 ---
 
-![](https://img.shields.io/badge/day%20📅-22-blue) ![](https://img.shields.io/badge/stars%20⭐-22-yellow) ![](https://img.shields.io/badge/days%20completed-17-red)
-# Advent of Code 2022
+![](https://img.shields.io/badge/day%20📅-22-blue) ![](https://img.shields.io/badge/stars%20⭐-22-yellow) ![](https://img.shields.io/badge/days%20completed-17-red)\
 
 Solving Advent of Code 2022 using Julia
 
 ```{julia}
 #| echo: false
 #| output: asis
+ 
 using Advent2022
 using BenchmarkTools
-using PrettyTables
 
-conf = set_pt_conf(tf = tf_markdown)
+bresults = Advent2022.benchmark()
 
-bscores = Advent2022.benchmark()
-
-header = ["Day", "Time", "Memory"]
-data = map(bscores) do (d, t, m)
-    [d, BenchmarkTools.prettytime(t), BenchmarkTools.prettymemory(m)]
+function _to_markdown_table(bresults)
+    header = "| Day | Time | Allocated memory |\n" *
+             "|----:|-----:|-----------------:|"
+    lines = [header]
+    for (d, t, m) in bresults
+        ds = string(d)
+        ts = BenchmarkTools.prettytime(t)
+        ms = BenchmarkTools.prettymemory(m)
+        push!(lines, "| $ds | $ts | $ms |")
     end
-data = permutedims(hcat(data...))
+    return join(lines, "\n")    
+end
 
-pretty_table_with_conf(conf, data; header = header)
+_to_markdown_table(bresults)
 ```
