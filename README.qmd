@@ -32,5 +32,5 @@ function _to_markdown_table(bresults)
     return join(lines, "\n")    
 end
 
-_to_markdown_table(bresults)
+print(_to_markdown_table(bresults))
 ```
