@@ -27,78 +27,51 @@ function neighbours(input,idx)
     neighbourlist
 end
 
-function dijkstra(io::IO)
+function bfs(io::IO)
 
     input = preprocess(io)
     distance = fill(Inf,size(input))
     visited = fill(false,size(input))
 
     elevationDict = Dict(['a':'z'...] .=> [1:26...])
-
     elevationDict['S'] = 1
     elevationDict['E'] = 26
     
-    start = findfirst(x->x=='S', input)
-    goal = findfirst(x->x=='E', input)
-
-    distance[start] = 0
-    visited[start] = true
-    pq = PriorityQueue(start => 0)
-
-    while !isempty(pq)
-        u = dequeue!(pq)
-        #u == goal && break
-        for n in neighbours(input,u)
-            a = elevationDict[input[u]]
-            b = elevationDict[input[n]]
-            b > (a+1) && continue
-            dist = distance[u]+1
-            distance[n] = min(dist,distance[n])
-            if !visited[n]
-                visited[n] = true
-                pq[n] = distance[n]
-            end
-        end
-    end
-
-    distance[goal]
-end
-
-function dijkstraback(io::IO)
-
-    input = preprocess(io)
-    distance = fill(Inf,size(input))
-    visited = fill(false,size(input))
-
-    elevationDict = Dict(['a':'z'...] .=> [1:26...])
-
-    elevationDict['S'] = 1
-    elevationDict['E'] = 26
-    
-    #start = findfirst(x->x=='S', input)
+    # we go backwards because that makes part two easier
     start = findfirst(x->x=='E', input)
+    goalone = findfirst(x->x=='S', input)
+    goaltwo = findall(x->x=='a', input)
 
     distance[start] = 0
     visited[start] = true
-    pq = PriorityQueue(start => 0)
+    q = Queue{CartesianIndex}()
+    enqueue!(q,start)
 
-    while !isempty(pq)
-        u = dequeue!(pq)
-        #u == goal && break
+    #populate the whole map: no early stopping so we can do partone and parttwo simultaneously
+    while !isempty(q)
+        u = dequeue!(q)
         for n in neighbours(input,u)
             a = elevationDict[input[u]]
             b = elevationDict[input[n]]
+            # this is the only thing you have to change to go backwards: we invert the rule about elevation
             b < (a-1) && continue
             dist = distance[u]+1
             distance[n] = min(dist,distance[n])
             if !visited[n]
                 visited[n] = true
-                pq[n] = distance[n]
+                enqueue!(q,n)
             end
         end
     end
 
-    minimum(distance[map(x->x=='a',input)])
+    partone = distance[goalone]
+    parttwo = minimum([distance[coord] for coord in goaltwo])
+
+    partone, parttwo
+end
+
+function solutions(io::String="data/12.txt")
+    partone, parttwo = bfs(open(io))
 end
 
 end
