@@ -1,0 +1,41 @@
+name: Render README
+on:
+
+  workflow_dispatch:
+
+  push:
+    paths:
+      - '**.qmd'
+
+jobs:
+  quarto-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+      - uses: actions/checkout@v2               # clones your repo
+
+      - name: Setup quarto
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Setup jupyter
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+      - run: pip install jupyter
+
+      - name: Setup julia
+      - uses: julia-actions/setup-julia@v1
+      - run: julia --project -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Render project
+      - uses: quarto-dev/quarto-actions/render@v2
+
+      - name: Push changes
+      - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
+        with:
+          commit_message: Render readme
+          file_pattern: README.md
+
+
+

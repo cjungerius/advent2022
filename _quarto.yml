@@ -1,0 +1,7 @@
+project:
+  title: "advent2022"
+  render:
+    - README.qmd
+
+
+
