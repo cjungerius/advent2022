@@ -3,7 +3,7 @@ Advent2022.jl
 Chris Jungerius
 12/12/2022
 
-![](https://img.shields.io/badge/day%20📅-12-blue.png)
+![](https://img.shields.io/badge/day%20📅-13-blue.png)
 ![](https://img.shields.io/badge/stars%20⭐-24-yellow.png)
 ![](https://img.shields.io/badge/days%20completed-12-red.png)  
 
