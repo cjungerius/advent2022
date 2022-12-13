@@ -2,34 +2,30 @@ module Day13
 
 using JSON
 
-function compare(a::Int,b::Int)
-    sign(a-b)
-end
-
-function compare(A::Array,B::Array)
-    for (a,b) in zip(A,B)
-        c = compare(a,b) 
-        c == 0 ? continue : return c
+function compare(a,b)::Int
+    a isa Int && b isa Int && return sign(a-b)
+    if a isa Vector && b isa Vector
+        for (x,y) in zip(a,b)
+            c = compare(x,y)
+            c == 0 ? continue : return c
+        end
+        return sign(length(a) - length(b))
+    elseif a isa Int
+        return compare([a],b)
+    elseif b isa Int
+        return compare(a,[b])
     end
-    sign(length(A) - length(B))
-end
-
-function compare(A::Array, b::Int)
-    compare(A,[b])
-end
-
-function compare(a::Int,B::Array)
-    compare([a],B)
+    error("Input types not valid!")
 end
 
 function comparesort(x,y)
     compare(x,y) == -1
 end
 
-function findvalid(io::IO)
+function findvalid(io)
 
     indices = Int[]
-    index::Int = 1
+    index = 1
 
     input = readlines(io)
     for i in 1:3:length(input)
@@ -40,17 +36,16 @@ function findvalid(io::IO)
    sum(indices)     
 end
 
-function sortpackets(io::IO)
+function sortpackets(io)
 
     packetlist = []
     for packet in eachline(io)
         length(packet) > 0 && push!(packetlist, JSON.parse(packet))
     end
 
-    push!(packetlist,[[2]],[[6]])
-
     sort!(packetlist,lt=comparesort)
-    findfirst(x->x==[[2]],packetlist) * findfirst(x->x==[[6]],packetlist)
+
+    (searchsortedfirst(packetlist,[[2]],lt=comparesort)+1) * (searchsortedfirst(packetlist,[[6]],lt=comparesort)+1)
 end
 
 end
