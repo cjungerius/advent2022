@@ -4,7 +4,7 @@ function createstacks(stackinput)
 
     stacklocs = [2:4:length(stackinput[1])...]
     stacks = [[] for i in 1:length(stacklocs)]
-
+    
     for level in reverse(stackinput)
         for (i, loc) in enumerate(stacklocs)
             isletter(level[loc]) && push!(stacks[i], level[loc])
@@ -14,18 +14,19 @@ function createstacks(stackinput)
     stacks
 end
 
-function cargocrane(io::IO, new=false)
+function cargocrane(io, new=false)
 
     stackinput = String[]
+    el = eachline(io)
 
-    for line in eachline(io)
+    for line in el
         length(line) == 0 && break
         push!(stackinput, line)
     end
 
     stacks = createstacks(stackinput)
 
-    for instruction in eachline(io)
+    for instruction in el
         n, source, dest = filter(!isnothing, tryparse.(Int, split(instruction, " ")))
         if new
             push!(stacks[dest],
@@ -41,8 +42,9 @@ function cargocrane(io::IO, new=false)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "05.txt"))
-    partone = cargocrane(open(io))
-    parttwo = cargocrane(open(io), true)
+    ispath(io) || (io = IOBuffer(io))
+    partone = cargocrane(io)
+    parttwo = cargocrane(io, true)
     partone, parttwo
 end
 

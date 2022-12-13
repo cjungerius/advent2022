@@ -1,6 +1,6 @@
 module Day09
 
-function longropephysics(io::IO)
+function longropephysics(io)
     x = ones(Int, 10)
     y = ones(Int, 10)
 
@@ -36,7 +36,8 @@ function longropephysics(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "09.txt"))
-    partone, parttwo = longropephysics(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = longropephysics(io)
 end
 
 

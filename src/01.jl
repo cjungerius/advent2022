@@ -1,6 +1,6 @@
 module Day01
 
-function solve(io::IO)
+function solve(io)
 
     elves = Int[0]
     x::Union{Nothing,Int} = nothing
@@ -19,7 +19,8 @@ function solve(io::IO)
 end
 
 function solutions(io::String= joinpath(@__DIR__, "..", "data", "01.txt"))
-    partone, parttwo = solve(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = solve(io)
 end
 
 end

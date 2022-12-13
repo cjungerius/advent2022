@@ -1,6 +1,6 @@
 module Day03
 
-function commoncompartment(io::IO)
+function commoncompartment(io)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
     for line in eachline(io)
@@ -10,7 +10,7 @@ function commoncompartment(io::IO)
     prioritysum
 end
 
-function findbadge(io::IO)
+function findbadge(io)
     priorities = Dict(['a':'z'..., 'A':'Z'...] .=> [1:52...])
     prioritysum = 0
     input = String[]
@@ -29,8 +29,9 @@ function findbadge(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "03.txt"))
-    partone = commoncompartment(open(io))
-    parttwo = findbadge(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone = commoncompartment(io)
+    parttwo = findbadge(io)
     partone, parttwo
 end
 

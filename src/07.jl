@@ -1,6 +1,6 @@
 module Day07
 
-function findspace(io::IO)::Tuple{Int,Int}
+function findspace(io)::Tuple{Int,Int}
 
     filesys = Dict{String,Int}()
     path::String = "root"
@@ -43,7 +43,8 @@ function findspace(io::IO)::Tuple{Int,Int}
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "07.txt"))
-    partone, parttwo = findspace(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = findspace(io)
 end
 
 end

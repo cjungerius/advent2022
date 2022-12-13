@@ -1,6 +1,6 @@
 module Day04
 
-function sectionoverlaps(io::IO)
+function sectionoverlaps(io)
 
     overlaps = 0
     fulloverlaps = 0
@@ -20,7 +20,8 @@ function sectionoverlaps(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "04.txt"))
-    partone, parttwo = sectionoverlaps(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = sectionoverlaps(io)
 end
 
 end

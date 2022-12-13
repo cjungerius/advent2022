@@ -1,6 +1,6 @@
 module Day10
 
-function getsignal(io::IO)
+function getsignal(io)
     x = 1
     signal = Int[]
     for line in eachline(io)
@@ -26,7 +26,8 @@ function getsignal(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "10.txt"))
-    partone, parttwo = getsignal(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = getsignal(io)
 end
 
 end

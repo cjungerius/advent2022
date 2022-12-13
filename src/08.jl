@@ -2,7 +2,7 @@ module Day08
 
 using Pipe: @pipe
 
-function preprocess(io::IO)
+function preprocess(io)
     input = readlines(io)
     output = @pipe input |> split.(_, "") |> [parse.(Int, line) for line in _] |> vcat(transpose.(_)...)
     output
@@ -85,7 +85,8 @@ function scenicscore(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "08.txt"))
-    input = preprocess(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    input = preprocess(io)
     partone = visible(input)
     parttwo = scenicscore(input)
     partone, parttwo

@@ -1,6 +1,6 @@
 module Day02
 
-function solve(io::IO)
+function solve(io)
 
     #possible outcomes: each letter in the left column gives a given score for losing to it, tying it or beating it
 
@@ -36,7 +36,8 @@ function solve(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "02.txt"))
-    partone, parttwo = solve(open(io))
+    ispath(io) || (io = IOBuffer(io))
+    partone, parttwo = solve(io)
 end
 
 end

@@ -25,7 +25,7 @@ function Monkey(input)::Monkey
     Monkey(items, op, oparg, modtest, truemonkey, falsemonkey, 0)
 end
 
-function makemonkeys(io::IO)
+function makemonkeys(io)
     monkeys = Monkey[]
     input = String[]
     for line in eachline(io)
@@ -43,9 +43,9 @@ function makemonkeys(io::IO)
     monkeys
 end
 
-function monkeybusiness(io::IO, n, worry=false)
+function monkeybusiness(io, n, worry=false)
 
-    monkeys = makemonkeys(io::IO)
+    monkeys = makemonkeys(io)
     opdict = Dict{String,Function}(["*", "+"] .=> [*, +])
 
     # item % lowest common multiple behaves the same for all tests as the original number, so:
@@ -70,9 +70,9 @@ function monkeybusiness(io::IO, n, worry=false)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "11.txt"))
-
-    partone = monkeybusiness(open(io), 20)
-    parttwo = monkeybusiness(open(io), 10000, true)
+    ispath(io) || (io = IOBuffer(io))
+    partone = monkeybusiness(io, 20)
+    parttwo = monkeybusiness(io, 10000, true)
 
     partone, parttwo
 end

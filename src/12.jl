@@ -2,7 +2,7 @@ module Day12
 
 using DataStructures
 
-function preprocess(io::IO)
+function preprocess(io)
 
     input = []
 
@@ -26,7 +26,7 @@ function neighbours(input,idx)
     neighbourlist
 end
 
-function bfs(io::IO)
+function bfs(io)
 
     input = preprocess(io)
     distance = fill(Inf,size(input))
@@ -67,6 +67,7 @@ function bfs(io::IO)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "12.txt"))
+    ispath(io) || (io = IOBuffer(io))
     partone, parttwo = bfs(open(io))
 end
 
