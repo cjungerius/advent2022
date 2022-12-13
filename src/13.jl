@@ -48,4 +48,12 @@ function sortpackets(io)
     (searchsortedfirst(packetlist,[[2]],lt=comparesort)+1) * (searchsortedfirst(packetlist,[[6]],lt=comparesort)+1)
 end
 
+function solutions(io::String=joinpath(@__DIR__,"..","data","13.txt"))
+    ispath(io) || (io = IOBuffer(io))
+    partone = findvalid(io)
+    parttwo = sortpackets(io)
+
+    partone, parttwo
+end
+
 end
