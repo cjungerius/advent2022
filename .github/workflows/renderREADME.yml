@@ -21,25 +21,17 @@ jobs:
           python-version: '3.x'
       
       - run: pip install jupyter
-    #   - uses: actions/checkout@v2               # clones your repo
 
-    #   - uses: quarto-dev/quarto-actions/setup@v2
+      - uses: julia-actions/setup-julia@v1
+    
+      - run: julia --project -e 'using Pkg; Pkg.instantiate()'
 
-    #   - uses: actions/setup-python@v4
-    #     with:
-    #       python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+      - uses: quarto-dev/quarto-actions/render@v2
 
-    # - run: pip install jupyter
-
-    #   - uses: julia-actions/setup-julia@v1
-    #   - run: julia --project -e 'using Pkg; Pkg.instantiate()'
-
-    #   - uses: quarto-dev/quarto-actions/render@v2
-
-    #   - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
-    #     with:
-    #       commit_message: Render readme
-    #       file_pattern: README.md
+      - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
+        with:
+          commit_message: Render readme
+          file_pattern: README.md
 
 
 
