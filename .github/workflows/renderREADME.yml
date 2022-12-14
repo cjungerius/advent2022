@@ -1,0 +1,45 @@
+name: Render README
+on:
+
+  workflow_dispatch:
+
+  push:
+    paths:
+      - '**.qmd'
+
+jobs:
+  quarto-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: joblo2213/aoc-badges-action@v3
+        with:
+          userid: 1015584                          # your user id, see setup on how to obtain
+          session: ${{ secrets.AOC_SESSION }}    # secret containing session code, see setup on how to obtain
+          year: 2022
+          file: 'README.qmd'
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - run: pip install jupyter
+
+      - uses: julia-actions/setup-julia@v1
+    
+      - run: julia --project -e 'using Pkg; Pkg.instantiate()'
+      - run: julia -e 'using Pkg; Pkg.add("IJulia")'
+
+      - uses: quarto-dev/quarto-actions/render@v2
+
+      - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
+        with:
+          commit_message: Render readme
+          file_pattern: README.qmd README.md
+
+
+
