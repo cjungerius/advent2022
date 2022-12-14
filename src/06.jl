@@ -8,8 +8,9 @@ function findmarker(io, n)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "06.txt"))
-    ispath(io) || (io = IOBuffer(io))
-    partone, parttwo = findmarker(io, 4), findmarker(io, 14)
+    partone = ispath(io) ? findmarker(io, 4) : findmarker(IOBuffer(io), 4)
+    parttwo = ispath(io) ? findmarker(io, 14) : findmarker(IOBuffer(io), 14)
+    partone,parttwo
 end
 
 end

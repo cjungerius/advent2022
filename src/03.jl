@@ -23,15 +23,20 @@ function findbadge(io)
         else
             push!(input, line)
         end
-
     end
+
+    #if no newline at end of file:
+    if length(input) == 3
+        commonitem = Set(input[1]) ∩ Set(input[2]) ∩ Set(input[3])
+        prioritysum += priorities[pop!(commonitem)]
+    end
+
     prioritysum
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "03.txt"))
-    ispath(io) || (io = IOBuffer(io))
-    partone = commoncompartment(io)
-    parttwo = findbadge(io)
+    partone = ispath(io) ? commoncompartment(io) :  commoncompartment(IOBuffer(io))
+    parttwo = ispath(io) ? findbadge(io) :  findbadge(IOBuffer(io))
     partone, parttwo
 end
 

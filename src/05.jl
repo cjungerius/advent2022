@@ -42,9 +42,8 @@ function cargocrane(io, new=false)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "05.txt"))
-    ispath(io) || (io = IOBuffer(io))
-    partone = cargocrane(io)
-    parttwo = cargocrane(io, true)
+    partone = ispath(io) ? cargocrane(io) : cargocrane(IOBuffer(io))
+    parttwo = ispath(io) ? cargocrane(io, true) : cargocrane(IOBuffer(io), true)
     partone, parttwo
 end
 
