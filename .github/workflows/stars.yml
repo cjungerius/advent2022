@@ -22,6 +22,15 @@ jobs:
           userid: 1015584                          # your user id, see setup on how to obtain
           session: ${{ secrets.AOC_SESSION }}    # secret containing session code, see setup on how to obtain
           year: 2022
+          file: 'README.md'
+      
+      - uses: joblo2213/aoc-badges-action@v3
+        with:
+          userid: 1015584                          # your user id, see setup on how to obtain
+          session: ${{ secrets.AOC_SESSION }}    # secret containing session code, see setup on how to obtain
+          year: 2022 
+          file: 'README.qmd'
+
           
 #         Optional inputs:
 #         
@@ -35,4 +44,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
         with:
           commit_message: Update badges
-          file_pattern: README.md
+          file_pattern: README.md README.qmd
