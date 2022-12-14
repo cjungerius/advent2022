@@ -25,6 +25,7 @@ jobs:
       - uses: julia-actions/setup-julia@v1
     
       - run: julia --project -e 'using Pkg; Pkg.instantiate()'
+      - run: julia -e 'using Pkg; Pkg.add("IJulia")'
 
       - uses: quarto-dev/quarto-actions/render@v2
 
