@@ -12,24 +12,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2               # clones your repo
+      - uses: actions/checkout@v2
 
       - uses: quarto-dev/quarto-actions/setup@v2
 
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          python-version: '3.x'
+      
       - run: pip install jupyter
+    #   - uses: actions/checkout@v2               # clones your repo
 
-      - uses: julia-actions/setup-julia@v1
-      - run: julia --project -e 'using Pkg; Pkg.instantiate()'
+    #   - uses: quarto-dev/quarto-actions/setup@v2
 
-      - uses: quarto-dev/quarto-actions/render@v2
+    #   - uses: actions/setup-python@v4
+    #     with:
+    #       python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
 
-      - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
-        with:
-          commit_message: Render readme
-          file_pattern: README.md
+    # - run: pip install jupyter
+
+    #   - uses: julia-actions/setup-julia@v1
+    #   - run: julia --project -e 'using Pkg; Pkg.instantiate()'
+
+    #   - uses: quarto-dev/quarto-actions/render@v2
+
+    #   - uses: stefanzweifel/git-auto-commit-action@v4     # Step that pushes these local changes back to your github repo
+    #     with:
+    #       commit_message: Render readme
+    #       file_pattern: README.md
 
 
 
