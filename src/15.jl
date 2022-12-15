@@ -39,7 +39,7 @@ function sensorrange(sensors,y)
 
     for sensor in sensors
         diff = sensor.mdist - abs(sensor.y-y)
-        diff > 0 && push!(coverage, [sensor.x-diff,sensor.x+diff])
+        diff ≥ 0 && push!(coverage, [sensor.x-diff,sensor.x+diff])
     end
     sort!(coverage)
 end
@@ -52,7 +52,7 @@ function checkgap(coverage,rmin,rmax)::Union{Nothing, Int}
             continue
         elseif a > rmax 
             return nothing
-        elseif a > e
+        elseif a > e+1
             return a-1
         end
         e = max(e,b)
@@ -84,8 +84,27 @@ function getborder(sensor::Sensor)
     for dx in 0:bdist
         dy = bdist - dx
         push!(edge,(sensor.x+dx,sensor.y+dy))
+        push!(edge,(sensor.x-dx,sensor.y+dy))
+        push!(edge,(sensor.x+dx,sensor.y-dy))
+        push!(edge,(sensor.x-dx,sensor.y-dy))
     end
     edge
+end
+
+function walkborders(sensors,rmin, rmax)
+
+    for (i,sensor) in enumerate(sensors)
+        border = getborder(sensor)
+        for b in border
+            rmin < b[1] < rmax || continue
+            rmin < b[2] < rmax || continue
+            any([inrange(s,b) for s in sensors]) || return b
+        end
+    end
+end
+
+function inrange(sensor,(x,y))
+    abs(sensor.x - x) + abs(sensor.y - y) ≤ sensor.mdist
 end
 
 end
