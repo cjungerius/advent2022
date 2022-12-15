@@ -5,6 +5,12 @@ module Day15
 #noticed they all overlap
 #distance of minimum to maximum *-1* (because 1 beacon present in line) = answer
 
+struct Sensor
+    x::Int
+    y::Int
+    mdist::Int
+end
+
 function createmap(io = "data/15.txt")
         nummatch = r"(-?[0-9]+)"
         sensors = []
@@ -17,26 +23,39 @@ function createmap(io = "data/15.txt")
     sensors, beacons
 end
 
-
-function sensorrange(sensors,beacons,y)
-    coverage = Tuple[]
-
+function createsensors(sensors,beacons)
+    sensorarray = Sensor[]
     for (sensor, beacon) in zip(sensors, beacons)
-        manhattan = abs(sensor[1]-beacon[1]) + abs(sensor[2] - beacon[2])
-        diff = manhattan - abs(sensor[2]-y)
-        diff > 0 && push!(coverage, (sensor[1]-diff,sensor[1]+diff))
+        manhattan = abs(sensor[1]-beacon[1]) + abs(sensor[2]-beacon[2])
+        push!(sensorarray,Sensor(sensor[1],sensor[2],manhattan))
+    end
+    sensorarray
+end
+
+
+function sensorrange(sensors,y)
+
+    coverage = Array[]
+
+    for sensor in sensors
+        diff = sensor.mdist - abs(sensor.y-y)
+        diff > 0 && push!(coverage, [sensor.x-diff,sensor.x+diff])
     end
     sort!(coverage)
 end
 
 function checkgap(coverage,rmin,rmax)::Union{Nothing, Int}
 
-    overlap = 0
-    for (a,b) in zip(coverage,coverage[2:end])
-        a[2] < rmin && continue
-        b[1] > rmax && return nothing
-        overlap = max(overlap,a[2])
-        b[1] > overlap && return a[2] + 1
+    e = 0
+    for (a,b) in coverage
+        if b < rmin 
+            continue
+        elseif a > rmax 
+            return nothing
+        elseif a > e
+            return a-1
+        end
+        e = max(e,b)
     end
     nothing
 end
@@ -50,15 +69,23 @@ function coveragelength(coverage)
     end
 end
 
-function findspot(sensors, beacons,rmin=0,rmax=4000000)
+function findspot(sensors, rmin=0,rmax=4000000)
 
-    x = nothing
     for y in rmin:rmax
-        c = sensorrange(sensors,beacons,y)
-        x = checkgap(c,rmin,rmax)
-        !isnothing(x) && return (x,y)
+       c = sensorrange(sensors,y)
+       x = checkgap(c,rmin,rmax)
+       !isnothing(x) && return (x,y)
     end
-    nothing
+end
+
+function getborder(sensor::Sensor)
+    edge = []
+    bdist = sensor.mdist+1
+    for dx in 0:bdist
+        dy = bdist - dx
+        push!(edge,(sensor.x+dx,sensor.y+dy))
+    end
+    edge
 end
 
 end
