@@ -5,53 +5,60 @@ module Day15
 #noticed they all overlap
 #distance of minimum to maximum *-1* (because 1 beacon present in line) = answer
 
-function f(io = "data/15.txt")
+function createmap(io = "data/15.txt")
         nummatch = r"(-?[0-9]+)"
         sensors = []
         beacons = []
         for line in eachline(io)
-        items = [parse(Int, x.captures[1]) for x in eachmatch(nummatch, line)]
-        push!(sensors, (items[1:2]))
-        push!(beacons, (items[3:4]))
+            items = [parse(Int, x.captures[1]) for x in eachmatch(nummatch, line)]
+            push!(sensors, (items[1:2]))
+            push!(beacons, (items[3:4]))
         end
+    sensors, beacons
+end
 
-        coverage = []
 
-        for (sensor, beacon) in zip(sensors, beacons)
-            manhattan = abs(sensor[1]-beacon[1]) + abs(sensor[2] - beacon[2])
-            if 2000000 in sensor[2]-manhattan:sensor[2]+manhattan
-                diff = manhattan - abs(sensor[2]-2000000)
-                push!(coverage, (sensor[1]-diff:sensor[1]+diff))
-            end
-        end
-        coverage
+function sensorrange(sensors,beacons,y)
+    coverage = Tuple[]
+
+    for (sensor, beacon) in zip(sensors, beacons)
+        manhattan = abs(sensor[1]-beacon[1]) + abs(sensor[2] - beacon[2])
+        diff = manhattan - abs(sensor[2]-y)
+        diff > 0 && push!(coverage, (sensor[1]-diff,sensor[1]+diff))
     end
+    sort!(coverage)
+end
 
+function checkgap(coverage,rmin,rmax)::Union{Nothing, Int}
 
-#scan each line, find a coordinate, then flip and do it for the other one lol
-#it aint pretty but it worked
-function g(io = "data/15.txt")
-        nummatch = r"(-?[0-9]+)"
-        sensors = []
-        beacons = []
-        for line in eachline(io)
-        items = [parse(Int, x.captures[1]) for x in eachmatch(nummatch, line)]
-        push!(sensors, (items[1:2]))
-        push!(beacons, (items[3:4]))
-        end
-        
-        ys = trues(4000000)
-        for i in 3292963:4000000
-            ys[1:end] .= true
-            for (sensor, beacon) in zip(sensors, beacons)
-                manhattan = abs(sensor[1]-beacon[1]) + abs(sensor[2] - beacon[2])
-                if i in sensor[1]-manhattan:sensor[1]+manhattan
-                    diff = manhattan - abs(sensor[1]-i)
-                    ys[max(1,sensor[2]-diff):min(sensor[2]+diff,4000000)] .= false
-                end
-            end
-            any(ys) && break
-        end
-    ys
+    overlap = 0
+    for (a,b) in zip(coverage,coverage[2:end])
+        a[2] < rmin && continue
+        b[1] > rmax && return nothing
+        overlap = max(overlap,a[2])
+        b[1] > overlap && return a[2] + 1
     end
+    nothing
+end
+
+function coveragelength(coverage)
+
+    xmin = minimum(x[1] for x in coverage)
+    xmax = maximum(x[2] for x in coverage)
+    if isnothing(checkgap(coverage,xmin,xmax))
+        return length(xmin:xmax)
+    end
+end
+
+function findspot(sensors, beacons,rmin=0,rmax=4000000)
+
+    x = nothing
+    for y in rmin:rmax
+        c = sensorrange(sensors,beacons,y)
+        x = checkgap(c,rmin,rmax)
+        !isnothing(x) && return (x,y)
+    end
+    nothing
+end
+
 end
