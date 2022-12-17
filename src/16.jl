@@ -33,12 +33,12 @@ function partone(flowdict, connectiondict)
 
         time, loc, score, opened = state
 
+        score += sum(x->get(flowdict,x,0),opened,init=0)
         if time == 0
             return score
         end
 
-        score += sum(x->get(flowdict,x,0),opened,init=0)
-        get(mem,(time,loc),-1) > score && return -1
+        get(mem,(time,loc),-1) >= score && return -1
         mem[(time,loc)] = score
 
         nextstates = Int[]
@@ -55,7 +55,7 @@ function partone(flowdict, connectiondict)
         return maximum(nextstates)
     end
 
-    g((30,"AA",0,[]))
+    g((29,"AA",0,[]))
 end
 
 function partone_i(flowdict, connectiondict)
@@ -99,40 +99,45 @@ function parttwo(flowdict, connectiondict)
     function g(state)
 
         time, locA, locB, score, opened = state
+        score += sum([flowdict[x] for x in opened],init=0)
 
-        if time == 0
+        if time == 26
+            if score >=2423
+                @show state
+            end
             return score
         end
 
-        get(mem,(time,locA, locB),-1) > score && return -1
+        get(mem,(time,locA, locB),-1) >= score && return -1
         mem[(time,locA,locB)] = score
 
-        score += sum(x->get(flowdict,x,0),opened,init=0)
         nextstates = Int[]
 
-        canopenA = flowdict[locA] > 0 && !(locA in opened)
+        canopenA = flowdict[locA] > 0 && !(locA in opened) && locB != locA
         canopenB = flowdict[locB] > 0 && !(locB in opened) && locA != locB
         
             if canopenA && canopenB
-                push!(nextstates,g((time-1,locA,locB,score,[opened...,locA,locB])))            
-            elseif canopenA
+                push!(nextstates,g((time+1,locA,locB,score,[opened...,locA,locB])))
+            end            
+            
+            if canopenA
                 for m in connectiondict[locB]
-                    push!(nextstates,g((time-1,locA,m,score,[opened...,locA])))
-                end
+                    push!(nextstates,g((time+1,locA,m,score,[opened...,locA])))
+                end                
             elseif canopenB
                 for n in connectiondict[locA]
-                    push!(nextstates,g((time-1,n,locB,score,[opened...,locB])))
+                    push!(nextstates,g((time+1,n,locB,score,[opened...,locB])))
                 end
-            else
-                for n in connectiondict[locA], m in connectiondict[locB]
-                    push!(nextstates,g((time-1,n,m,score,opened)))
-                end 
             end
+            
+            for n in connectiondict[locA], m in connectiondict[locB]
+                push!(nextstates,g((time+1,n,m,score,opened)))
+            end 
 
         return maximum(nextstates)
         end 
 
-    g((26,"AA","AA",0,[]))
+    g((1,"AA","AA",0,[]))
 end
 
 function recursive(flowdict, connectiondict)
@@ -145,6 +150,8 @@ function recursive(flowdict, connectiondict)
         time, location, score, opened = state
         opened = copy(opened)
 
+        score += sum([flowdict[o] for o in opened],init=0)
+
         if get(m,(time, location),-1) >= score
             return -1
         end
@@ -156,149 +163,143 @@ function recursive(flowdict, connectiondict)
         end
 
         scores = Int[]
+
+        for n in connectiondict[location]
+            push!(scores, g((time+1,n,score,opened)))
+        end
         
         if flowdict[location] > 0 && !(location in opened)
             push!(opened,location)
-            flow = sum(flowdict[o] for o in opened)
-            push!(scores,g((time+1,location,score+flow,opened)))
-        else
-            flow = sum([flowdict[o] for o in opened],init=0)
-            for n in connectiondict[location]
-                push!(scores, g((time+1,n,score+flow,opened)))
-            end
+            push!(scores,g((time+1,location,score,opened)))
         end
+
         return maximum(scores)
     end
     
     g((1,"AA",0,Set()))
 end
 
-function recursive_part2(flowdict, connectiondict)
-
-    s = [(1,"AA","AA",0,Set())]
-    maxscore = 0
-    m = Dict()
-
-    while !isempty(s)
-        
-        time, locationA, locationB, score, opened = pop!(s)
-        opened = deepcopy(opened)
-
-        if get(m,(time, locationA, locationB),-1) >= score
-            continue
-        end
-
-        m[(time,locationA, locationB)] = score
-
-        if time == 26
-            maxscore = max(maxscore,score)
-            continue
-        end
-
-        canopenA = flowdict[locationA] > 0 && !(locationA in opened)
-        canopenB = locationA != locationB && flowdict[locationB] > 0 && !(locationB in opened)
-        flow = sum([flowdict[o] for o in opened])        
-        
-        for newA in connectiondict[locationA], newB in connectiondict[locationB]
-            push!(s, (time+1,newA,newB,score+flow,opened))
-        end      
-
-        if canopenA             #open A, walk at B
-            push!(opened,locationA)
-            flow = sum([flowdict[o] for o in opened])
-
-            for newB in connectiondict[locationB]
-                push!(s,(time+1,locationA,newB,score+flow,opened))
-            end
-
-            pop!(opened,locationA)
-        end
-        
-        if canopenB         #open B, walk at A
-            push!(opened,locationB)
-            flow = sum([flowdict[o] for o in opened])
-
-            for newA in connectiondict[locationA]
-                push!(s,(time+1,newA,locationB,score+flow,opened))
-            end
-        end
-
-        if canopenA && canopenB     #open both
-            push!(opened,locationA, locationB)
-            flow = sum(flowdict[o] for o in opened)
-            push!(s,(time+1,locationA,locationB,score+flow,opened))
-        end
-
-    end
-
-    maxscore
-end
 
 function elephantdfs(flowdict, connectiondict, memory = Dict())
 
-    function g(state)
+    function g(state,best)
 
         time, me, elephant, score, opened = state
-        opened = copy(opened)
+        op = copy(opened)
 
-        scores = []
+        score += sum([flowdict[loc] for loc in op],init=0)
 
-        if get(memory,(time,me,elephant), -1) >= score # Had better score here before
-            return -1 # Skip to the next iteration
+        if time == 26
+            if score > best
+                return score
+            else
+                return -1
+            end
+        end
+
+        if get(memory,(time,me,elephant), -1) >= score || get(memory,(time,elephant,me),-1) >= score # Had better score here before
+            return -1
         end
 
         memory[(time,me,elephant)] = score # Save score for this time & location
+        memory[(time,elephant,me)] = score # Save score for this time & location
 
-        if time == 26
-            return score # Times up, so try next one
-        end
 
-        flow = sum([flowdict[loc] for loc in opened],init=0)
-        
-        mecanopen = flowdict[me] > 0 && !(me in opened)
-        elephantcanopen = flowdict[elephant] > 0 && !(elephant in opened)
+        scores = Int[]
+               
+        mecanopen = flowdict[me] > 0 && !(me in op)
+        elephantcanopen = flowdict[elephant] > 0 && !(elephant in op) && elephant != me
 
-        for neigh_me in connectiondict[me] # (1) Both go to neighbour
-            for neigh_eleph in connectiondict[elephant]
-                newscore = g((time+1, neigh_me, neigh_eleph, score+flow, opened))
-                push!(scores,newscore)
-            end
+        for neigh_me in connectiondict[me], neigh_eleph in connectiondict[elephant]
+                push!(scores,g((time+1, neigh_me, neigh_eleph, score, op),best))
         end
 
         if elephantcanopen # (2) Only elephant opens valve
-            push!(opened,elephant)
-            flow = sum(flowdict[loc] for loc in opened)
+            push!(op,elephant)
 
             for neigh_me in connectiondict[me]
-                newscore = g((time+1, neigh_me, elephant, score+flow, opened))
-                push!(scores,newscore)
+                push!(scores,g((time+1, neigh_me, elephant, score, op),best))
             end
 
-            pop!(opened,elephant)
+            delete!(op,elephant)
         end
 
         if mecanopen # (3) Only I open valve
-            push!(opened,me)
-            flow = sum(flowdict[loc] for loc in opened)
-
+            push!(op,me)
             for neigh_elephant in connectiondict[elephant]
-                newscore = g((time+1, me, neigh_elephant, score+flow, opened))
-                push!(scores,newscore)
+                push!(scores,g((time+1, me, neigh_elephant, score, op),best))
             end
 
             if elephantcanopen # (4) Both open valve
-                push!(opened,elephant)
-                flow = sum(flowdict[loc] for loc in opened)
-
-                newscore = g((time+1, me, elephant, score+flow, opened))
-                push!(scores,newscore)
+                push!(op,elephant)
+                push!(scores,g((time+1, me, elephant, score, op),best))
             end
         end
-
+        
         return maximum(scores)
     end
 
-    best = g((1, "AA", "AA", 0, Set()))
+    @show best = g((1, "AA", "AA", 0, Set()),0)
+    return best
+end
+
+function elephantdfs_i(flowdict, connectiondict, memory = Dict())
+
+    best = 0
+    stack = [(1, "AA", "AA", 0, Set())]
+
+    while !(isempty(stack))
+
+        time, me, elephant, score, opened = pop!(stack)
+
+        score += sum([flowdict[loc] for loc in opened],init=0)
+        
+        if time == 26
+            if score > best
+                best = score
+            end
+            continue # Times up, so try next one
+        end   
+
+        if get(memory,(time,me,elephant), -1) > score #|| get(memory,(time,elephant,me),-1) >= score # Had better score here before
+            continue
+        end
+
+
+        memory[(time,me,elephant)] = score # Save score for this time & location
+        #memory[(time,elephant,me)] = score # Save score for this time & location        
+
+               
+        mecanopen = flowdict[me] > 0 && !(me in opened)
+        elephantcanopen = flowdict[elephant] > 0 && !(elephant in opened) && elephant != me
+
+        for neigh_me in connectiondict[me], neigh_eleph in connectiondict[elephant]
+                push!(stack,(time+1, neigh_me, neigh_eleph, score, opened))
+        end
+
+        if elephantcanopen # (2) Only elephant opens valve
+            op = push!(copy(opened),elephant)
+
+            for neigh_me in connectiondict[me]
+                push!(stack,(time+1, neigh_me, elephant, score, op))
+            end
+
+        end
+
+        if mecanopen # (3) Only I open valve
+            op = push!(copy(opened),me)
+            for neigh_elephant in connectiondict[elephant]
+                push!(stack,(time+1, me, neigh_elephant, score, opened))
+            end
+
+            if elephantcanopen # (4) Both open valve
+                op = push!(copy(opened),elephant,me)
+                push!(stack,(time+1, me, elephant, score, opened))
+            end
+        end
+    end
+
+
     return best
 end
 
