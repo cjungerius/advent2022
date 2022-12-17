@@ -102,39 +102,37 @@ function parttwo(flowdict, connectiondict)
         score += sum([flowdict[x] for x in opened],init=0)
 
         if time == 26
-            if score >=2423
-                @show state
-            end
             return score
         end
 
         get(mem,(time,locA, locB),-1) >= score && return -1
         mem[(time,locA,locB)] = score
 
-        nextstates = Int[]
+        scores = Int[]
 
-        canopenA = flowdict[locA] > 0 && !(locA in opened) && locB != locA
+        canopenA = flowdict[locA] > 0 && !(locA in opened)
         canopenB = flowdict[locB] > 0 && !(locB in opened) && locA != locB
-        
-            if canopenA && canopenB
-                push!(nextstates,g((time+1,locA,locB,score,[opened...,locA,locB])))
-            end            
-            
-            if canopenA
-                for m in connectiondict[locB]
-                    push!(nextstates,g((time+1,locA,m,score,[opened...,locA])))
-                end                
-            elseif canopenB
-                for n in connectiondict[locA]
-                    push!(nextstates,g((time+1,n,locB,score,[opened...,locB])))
-                end
-            end
+
             
             for n in connectiondict[locA], m in connectiondict[locB]
-                push!(nextstates,g((time+1,n,m,score,opened)))
+                push!(scores,g((time+1,n,m,score,opened)))
             end 
 
-        return maximum(nextstates)
+            if canopenB
+                for n in connectiondict[locA]
+                    push!(scores,g((time+1,n,locB,score,[opened...,locB])))
+                end
+            elseif canopenA
+                for m in connectiondict[locB]
+                    push!(scores,g((time+1,locA,m,score,[opened...,locA])))
+                end
+            end
+
+            if canopenA && canopenB
+                push!(scores,g((time+1,locA,locB,score,[opened...,locA,locB])))
+            end            
+            
+           return maximum(scores)
         end 
 
     g((1,"AA","AA",0,[]))
@@ -239,14 +237,14 @@ function elephantdfs(flowdict, connectiondict, memory = Dict())
         return maximum(scores)
     end
 
-    @show best = g((1, "AA", "AA", 0, Set()),0)
+    best = g((1, "AA", "AA", 0, Set()),0)
     return best
 end
 
 function elephantdfs_i(flowdict, connectiondict, memory = Dict())
 
     best = 0
-    stack = [(1, "AA", "AA", 0, Set())]
+    stack = [(1, "AA", "AA", 0, [])]
 
     while !(isempty(stack))
 
@@ -261,13 +259,13 @@ function elephantdfs_i(flowdict, connectiondict, memory = Dict())
             continue # Times up, so try next one
         end   
 
-        if get(memory,(time,me,elephant), -1) > score #|| get(memory,(time,elephant,me),-1) >= score # Had better score here before
+        if get(memory,(time,me,elephant), -1) >= score || get(memory,(time,elephant,me),-1) >= score # Had better score here before
             continue
         end
 
 
         memory[(time,me,elephant)] = score # Save score for this time & location
-        #memory[(time,elephant,me)] = score # Save score for this time & location        
+        memory[(time,elephant,me)] = score # Save score for this time & location        
 
                
         mecanopen = flowdict[me] > 0 && !(me in opened)
@@ -278,25 +276,22 @@ function elephantdfs_i(flowdict, connectiondict, memory = Dict())
         end
 
         if elephantcanopen # (2) Only elephant opens valve
-            op = push!(copy(opened),elephant)
 
             for neigh_me in connectiondict[me]
-                push!(stack,(time+1, neigh_me, elephant, score, op))
+                push!(stack,(time+1, neigh_me, elephant, score, [opened...,elephant]))
             end
 
-        end
 
-        if mecanopen # (3) Only I open valve
-            op = push!(copy(opened),me)
+        elseif mecanopen # (3) Only I open valve
+
             for neigh_elephant in connectiondict[elephant]
-                push!(stack,(time+1, me, neigh_elephant, score, opened))
-            end
-
-            if elephantcanopen # (4) Both open valve
-                op = push!(copy(opened),elephant,me)
-                push!(stack,(time+1, me, elephant, score, opened))
+                push!(stack,(time+1, me, neigh_elephant, score, [opened...,me]))
             end
         end
+
+        if elephantcanopen && mecanopen # (4) Both open valve
+            push!(stack,(time+1, me, elephant, score, [opened...,elephant,me]))
+         end
     end
 
 
