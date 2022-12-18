@@ -83,7 +83,7 @@ function findcycle(io)
             occs = findall(x -> x == cyc[i], cyc)
             length(occs) < 3 && continue
             clengths = [b - a for (a, b) in zip(occs, occs[2:end])]
-            allequal(clengths) && return (i, cyc[occs[1]:occs[2]-1])
+            allequal(clengths) && return (occs[end-1], cyc[occs[end-1]:occs[end]-1])
         end
         n += 1000
     end
