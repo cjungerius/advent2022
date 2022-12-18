@@ -3,30 +3,16 @@ module Day18
 using DelimitedFiles
 using DataStructures
 
-example = """2,2,2
-1,2,2
-3,2,2
-2,1,2
-2,3,2
-2,2,1
-2,2,3
-2,2,4
-2,2,6
-1,2,5
-3,2,5
-2,1,5
-2,3,5"""
-
-function f(i=IOBuffer(example)) 
+function findsurfaces(io) 
     
-    coords = readdlm(i,',',Int)
+    coords = readdlm(io,',',Int)
     coords .+= 2
 
     xmax = maximum(coords[:,1])
     ymax = maximum(coords[:,2])
     zmax = maximum(coords[:,3])
 
-    grid = falses(xmax+4,ymax+4,zmax+4)
+    grid = falses(xmax+1,ymax+1,zmax+1)
 
     for c in axes(coords)[1]
         grid[coords[c,:]...] = true
@@ -74,5 +60,8 @@ function f(i=IOBuffer(example))
     surface, outsidesurface
 end
 
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "18.txt"))
+    partone, parttwo = ispath(io) ? findsurfaces(io) : findsurfaces(IOBuffer(io))
+end
 
 end
