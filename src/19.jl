@@ -52,7 +52,7 @@ function testblueprint(bp)
                 d_obsidian = state.d_obsidian
                 d_geodes = state.d_geodes           
 
-                if time == 32
+                if time == 24
                         return geodes
                 end
 
@@ -101,5 +101,68 @@ function testblueprint(bp)
         maxscore = dfs(start)
 end
 
+function testblueprint_mc(bp,n=100000)
+
+        orecost = bp[1]
+        claycost = bp[2]
+        obscost = bp[3:4]
+        geocost = bp[5:6]
+
+        maxscore = 0
+
+        
+        for i in 1:n
+                
+                ore = 0
+                clay = 0
+                obsidian = 0
+                geodes = 0
+                d_ore = 1
+                d_clay = 0
+                d_obsidian = 0
+                d_geodes = 0
+
+                for t in 1:32
+
+                        canbuildgeo = ore ≥ geocost[1] && obsidian ≥ geocost[2]
+
+                        canbuildore = ore ≥ orecost && d_ore < max(claycost,obscost[1],geocost[1])
+                        canbuildclay = ore ≥ claycost && d_clay < obscost[2]
+                        canbuildobsidian = ore ≥ obscost[1] && clay ≥ obscost[2] && d_obsidian < geocost[2]
+
+                        ore += d_ore
+                        clay += d_clay
+                        obsidian += d_obsidian
+                        geodes += d_geodes
+
+                        t==32 && continue
+
+                        if canbuildgeo
+                                d_geodes += 1
+                                ore -= geocost[1]
+                                obsidian -= geocost[2]
+                        elseif any([canbuildore, canbuildclay,canbuildobsidian])
+                                options = [canbuildore, canbuildclay, canbuildobsidian,true]
+                                step = argmax(rand(4).*options)
+                                if step == 1
+                                        d_ore += 1
+                                        ore -= orecost
+                                elseif step == 2
+                                        d_clay += 1
+                                        ore -= claycost
+                                elseif step == 3
+                                        d_obsidian += 1
+                                        ore -= obscost[1]
+                                        clay -= obscost[2]
+                                end
+                        end
+
+                end
+                maxscore = max(maxscore,geodes)
+        end
+
+
+        maxscore
+end
 
 end
