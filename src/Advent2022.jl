@@ -2,10 +2,11 @@ module Advent2022
 
 using BenchmarkTools
 
-solvedDays = 1:17
+solvedDays = 1:19
 
 #include and export all solved days
 for day in solvedDays
+    day == 18 && continue
     d = string(day, pad=2)
     include(string(day, pad=2) * ".jl")
     global modSymbol = Symbol("Day" * d)
