@@ -101,7 +101,7 @@ function testblueprint(bp)
         maxscore = dfs(start)
 end
 
-function testblueprint_mc(bp,n=100000)
+function testblueprint_mc(bp,n=200000)
 
         orecost = bp[1]
         claycost = bp[2]
@@ -122,7 +122,7 @@ function testblueprint_mc(bp,n=100000)
                 d_obsidian = 0
                 d_geodes = 0
 
-                for t in 1:32
+                for t in 1:24
 
                         canbuildgeo = ore ≥ geocost[1] && obsidian ≥ geocost[2]
 
@@ -141,20 +141,16 @@ function testblueprint_mc(bp,n=100000)
                                 d_geodes += 1
                                 ore -= geocost[1]
                                 obsidian -= geocost[2]
-                        elseif any([canbuildore, canbuildclay,canbuildobsidian])
-                                options = [canbuildore, canbuildclay, canbuildobsidian,true]
-                                step = argmax(rand(4).*options)
-                                if step == 1
-                                        d_ore += 1
-                                        ore -= orecost
-                                elseif step == 2
-                                        d_clay += 1
-                                        ore -= claycost
-                                elseif step == 3
-                                        d_obsidian += 1
-                                        ore -= obscost[1]
-                                        clay -= obscost[2]
-                                end
+                        elseif canbuildobsidian && rand() < 0.75
+                                d_obsidian += 1
+                                ore -= obscost[1]
+                                clay -= obscost[2]
+                        elseif canbuildclay && rand() < 0.5
+                                d_clay += 1
+                                ore -= claycost
+                        elseif canbuildore && rand() < 0.5
+                                d_ore += 1
+                                ore -= orecost
                         end
 
                 end
