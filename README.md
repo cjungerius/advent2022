@@ -4,7 +4,7 @@ Chris Jungerius
 12/12/22
 
 ![](https://img.shields.io/badge/day%20📅-19-blue.png)
-![](https://img.shields.io/badge/stars%20⭐-36-yellow.png)
+![](https://img.shields.io/badge/stars%20⭐-37-yellow.png)
 ![](https://img.shields.io/badge/days%20completed-18-red.png)  
 
 Solving Advent of Code 2022 using Julia
