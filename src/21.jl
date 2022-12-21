@@ -1,6 +1,6 @@
 module Day21
 
-function makedict(io="data/21.txt")
+function makedict(io)
 
         monkeydict = Dict()
 
@@ -44,14 +44,14 @@ function gradient_descent(monkeydict)
 
         get_diff(monkeydict, n=start) = (processdict(monkeydict, key1, true, n) - processdict(monkeydict, key2, true, n))
 
-        learningrate = 1 / (get_diff(monkeydict) - get_diff(monkeydict, start + 1))
+        learningrate = 1 / (get_diff(monkeydict, start + 1) - get_diff(monkeydict, start))
 
         distance = get_diff(monkeydict)
-        guess = Int(distance)
+        guess = start - round(Int, distance * learningrate)
 
         while !iszero(distance)
                 distance = get_diff(monkeydict, guess)
-                guess += floor(Int, distance * learningrate)
+                guess -= round(Int, distance * learningrate)
         end
 
         monkeydict["humn"] = start
