@@ -15,7 +15,7 @@ struct State
         d_geodes::Int
 end
 
-function f(io="data/19.txt")
+function makeblueprints(io="data/19.txt")
         blueprints = Array[]
         for line in eachline(io)
                 ms = eachmatch(r"(\d+)", line)
@@ -101,7 +101,7 @@ function testblueprint(bp)
         maxscore = dfs(start)
 end
 
-function testblueprint_mc(bp,n=100000)
+function testblueprint_mc(bp,n=200000; c=24)
 
         orecost = bp[1]
         claycost = bp[2]
@@ -122,7 +122,7 @@ function testblueprint_mc(bp,n=100000)
                 d_obsidian = 0
                 d_geodes = 0
 
-                for t in 1:32
+                for t in 1:c
 
                         canbuildgeo = ore ≥ geocost[1] && obsidian ≥ geocost[2]
 
@@ -135,26 +135,22 @@ function testblueprint_mc(bp,n=100000)
                         obsidian += d_obsidian
                         geodes += d_geodes
 
-                        t==32 && continue
+                        t==c && continue
 
                         if canbuildgeo
                                 d_geodes += 1
                                 ore -= geocost[1]
                                 obsidian -= geocost[2]
-                        elseif any([canbuildore, canbuildclay,canbuildobsidian])
-                                options = [canbuildore, canbuildclay, canbuildobsidian,true]
-                                step = argmax(rand(4).*options)
-                                if step == 1
-                                        d_ore += 1
-                                        ore -= orecost
-                                elseif step == 2
-                                        d_clay += 1
-                                        ore -= claycost
-                                elseif step == 3
-                                        d_obsidian += 1
-                                        ore -= obscost[1]
-                                        clay -= obscost[2]
-                                end
+                        elseif canbuildobsidian && rand() < .75
+                                d_obsidian += 1
+                                ore -= obscost[1]
+                                clay -= obscost[2]                                
+                        elseif canbuildclay && rand() < .5
+                                d_clay += 1
+                                ore -= claycost                        
+                        elseif canbuildore && rand() < .5                                
+                                d_ore += 1
+                                ore -= orecost
                         end
 
                 end
@@ -163,6 +159,18 @@ function testblueprint_mc(bp,n=100000)
 
 
         maxscore
+end
+
+
+function solutions(io::String=joinpath(@__DIR__,"..","data","19.txt"),deterministic=false)
+        ispath(io) || (io=IOBuffer(io))
+        blueprints = makeblueprints(io)
+        partonearr = deterministic ? testblueprint.(blueprints) : testblueprint_mc.(blueprints)
+        
+        partone = sum([i*partonearr[i] for i in eachindex(partonearr)])
+        parttwo = reduce(*,testblueprint_mc.(blueprints[1:3],c=32))
+
+        partone, parttwo
 end
 
 end

@@ -49,9 +49,9 @@ function sortpackets(io)
 end
 
 function solutions(io::String=joinpath(@__DIR__,"..","data","13.txt"))
-    ispath(io) || (io = IOBuffer(io))
-    partone = findvalid(io)
-    parttwo = sortpackets(io)
+    
+    partone = ispath(io) ? findvalid(io) : findvalid(IOBuffer(io))
+    parttwo = ispath(io) ? sortpackets(io) : sortpackets(IOBuffer(io))
 
     partone, parttwo
 end

@@ -70,10 +70,10 @@ function monkeybusiness(io, n, worry=false)
 end
 
 function solutions(io::String=joinpath(@__DIR__, "..", "data", "11.txt"))
-    ispath(io) || (io = IOBuffer(io))
-    partone = monkeybusiness(io, 20)
-    parttwo = monkeybusiness(io, 10000, true)
 
+    partone = ispath(io) ? monkeybusiness(io, 20) : monkeybusiness(IOBuffer(io), 20)
+    parttwo = ispath(io) ? monkeybusiness(io, 1000, true) : monkeybusiness(IOBuffer(io), 1000, true)
+    
     partone, parttwo
 end
 

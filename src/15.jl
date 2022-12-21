@@ -1,10 +1,5 @@
 module Day15
 
-#part 1 steps:
-#got set of ranges
-#noticed they all overlap
-#distance of minimum to maximum *-1* (because 1 beacon present in line) = answer
-
 struct Sensor
     x::Int
     y::Int
@@ -105,6 +100,34 @@ end
 
 function inrange(sensor,(x,y))
     abs(sensor.x - x) + abs(sensor.y - y) ≤ sensor.mdist
+end
+
+function getpartone(sensors,beacons,y=2000000)
+    coverage = sensorrange(sensors,y)
+    l = coveragelength(coverage)
+    
+   for s in sensors
+       s.y == y && (l -= 1)
+   end
+
+    for b in Set(beacons)
+        b[2] == y && (l -= 1)
+    end
+    
+    l
+end
+
+function getparttwo(sensors)
+    x, y = findspot(sensors)
+    x * 4000000 + y
+end
+
+function solutions(io::String=joinpath(@__DIR__,"..","data","15.txt"))
+    ispath(io) || (io = IOBuffer(io))
+    s, b = createmap(io)
+    sensors = createsensors(s,b)
+    partone = getpartone(sensors,b)    
+    parttwo = getparttwo(sensors)
 end
 
 end

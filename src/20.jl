@@ -1,5 +1,7 @@
 module Day20
 
+using DelimitedFiles
+
 function f(mylist,n=1)
         indices = [1:length(mylist)...]
 
@@ -14,6 +16,15 @@ function f(mylist,n=1)
         start = findfirst(iszero,decrypt)
         
         sum(decrypt[mod1.([start+1000,start+2000,start+3000],length(decrypt))])
+end
+
+function solutions(io::String=joinpath(@__DIR__,"..","data","20.txt"))
+        ispath(io) || (io = IOBuffer(io))
+        mylist = vec(readdlm(io,Int))
+        partone = f(mylist)
+        parttwo = f(mylist.*811589153, 10)
+
+        partone, parttwo
 end
 
 end
