@@ -2,12 +2,17 @@ module Day23
 
 using StatsBase
 
-function make_elves(io="data/23.txt", parttwo=false)
+function make_elves(io)::Vector{Tuple{Int,Int}}
         elves = Tuple{Int,Int}[]
         for (y, line) in enumerate(eachline(io))
                 xs = findall(==('#'), line)
                 push!(elves, [(x, y) for x in xs]...)
         end
+
+        elves
+end
+
+function move_elves!(elves::Vector{Tuple{Int,Int}})
 
         surround = falses(9)
         NSWE = [[1, 4, 7], [3, 6, 9], [1, 2, 3], [7, 8, 9]]
@@ -15,7 +20,6 @@ function make_elves(io="data/23.txt", parttwo=false)
         start = 1
         counter = 0
         partone = 0
-        parttwo = 0
 
         next = similar(elves)
 
@@ -71,8 +75,14 @@ function make_elves(io="data/23.txt", parttwo=false)
                 start += 1
         end
 
-        parttwo = counter
-        partone, parttwo
+        partone, counter
+end
+
+
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "23.txt"))
+        ispath(io) || (io = IOBuffer(io))
+        elves = make_elves(io)
+        partone, parttwo = move_elves!(elves)
 end
 
 end
