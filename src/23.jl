@@ -2,7 +2,7 @@ module Day23
 
 using StatsBase
 
-function make_elves(io="data/23.txt", n=10)
+function make_elves(io="data/23.txt", parttwo=false)
         elves = []
         for (y, line) in enumerate(eachline(io))
                 xs = findall(==('#'), line)
@@ -13,20 +13,32 @@ function make_elves(io="data/23.txt", n=10)
         NSWE = [[1,4,7],[3,6,9],[1,2,3],[7,8,9]]
         NSWEstep = [(0,-1),(0,1),(-1,0),(1,0)]
         start = 1
+        counter = 0
+        partone = 0
+        parttwo = 0
 
-        for i in 1:n
+        next = similar(elves)
+
+        while true
+                
+                counter += 1
+                if counter == 11
+                        a = maximum(x[2] for x in elves) - minimum(x[2] for x in elves) + 1
+                        b = maximum(x[1] for x in elves) - minimum(x[1] for x in elves) + 1
+                        partone = a*b - length(elves)
+                end
+                
                 tocheck = Set(elves)
-                next = []
 
-                for elf in elves
+                for (i,elf) in enumerate(elves)
                         surround[1:end] .= false
-                        for (i, (x,y)) in enumerate((x,y) for y in -1:1, x in -1:1)
+                        for (j, (x,y)) in enumerate((x,y) for y in -1:1, x in -1:1)
                                 x == y == 0 && continue
-                                (elf[1]+x,elf[2]+y) ∈ tocheck && (surround[i] = true)
+                                (elf[1]+x,elf[2]+y) ∈ tocheck && (surround[j] = true)
                         end
 
                         if sum(surround) == 0 
-                                push!(next,elf)
+                                next[i] = elf
                                 continue
                         end
                         canmove = false
@@ -35,27 +47,34 @@ function make_elves(io="data/23.txt", n=10)
                                 loccheck = NSWE[mod1(o,4)]
                                 if !any(surround[loccheck]) 
                                         canmove = true
-                                        push!(next,(elf .+ NSWEstep[mod1(o,4)])) 
+                                        next[i] = (elf .+ NSWEstep[mod1(o,4)])
                                         break
                                 end
                         end
 
                         if !canmove
-                                push!(next,elf)
+                                next[i] = elf
                         end
 
                 end
+
+                done = true
                 
                 nextcheck = countmap(next)
                 for (i,n) in enumerate(next)
                         if nextcheck[n] == 1
+                                done && elves[i] != n && (done=false)
                                 elves[i] = n
                         end
                 end
+                done && break
                 start += 1
         end
 
-        elves
+        a = maximum(x[2] for x in elves) - minimum(x[2] for x in elves) + 1
+        b = maximum(x[1] for x in elves) - minimum(x[1] for x in elves) + 1
+        parttwo = counter
+        partone, parttwo
 end
 
 end
