@@ -1,5 +1,7 @@
 using DataStructures
 using Combinatorics
+using Random
+using StatsBase
 
 function f(i="data/16.txt")
     nummatch = r"(\d+)"
@@ -56,36 +58,40 @@ function f(i="data/16.txt")
 end
 
 
-function partone(distgraph, flowamount,start=1,time=30)
-    maxscore = 0
-    states = Stack{Tuple}()
-    push!(states,(start,time,0,Int[start]))
+function partone_mc(distgraph,flowamount)
+    maxflow = 0
+    
+    #plans = permutations(2:size(distgraph)[1])
+    nodes = Int[1:length(flowamount)...]
+    open = falses(length(flowamount))
+    open[1] = true
 
-    mem = Dict()
+    for i in 1:100000
 
-    while !isempty(states)
-        loc, time, score, opened = pop!(states)
-
-        if time == 0
-            maxscore = max(score,maxscore)
-            continue
-        end
-
-        get(mem,(time,loc),-1) > score && continue
-        mem[(time,loc)] = score
-
-        dscore = sum(flowamount[opened])
-       
-        for v in eachindex(distgraph[loc,:])
-            if !(v in opened) && time - distgraph[loc,v] > 0
-                push!(states,(v, time-distgraph[loc,v]-1, score+dscore*(distgraph[loc,v]+1), [opened..., v]))
+        t = 30
+        flow = 0
+        dflow = 0
+        loc = 1
+        
+            for step in plan
+                dist = distgraph[loc,step]
+                dist+1 > t && break
+                flow += dflow*(dist+1)
+                dflow += flowamount[step]
+                loc = step
+                t -= (dist+1)
             end
-        end
-        push!(states,(loc,time-1,score+dscore,opened))
-    end
 
-maxscore
+            flow += dflow*t
+
+            maxflow = max(flow,maxflow)
+        end
+
+
+    maxflow
 end
 
 
 
+#idea for valve selection heuristic:
+# flowamount .* (t .- distgraph[loc,:])
