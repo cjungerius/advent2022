@@ -61,29 +61,38 @@ end
 function partone_mc(distgraph,flowamount)
     maxflow = 0
     
-    #plans = permutations(2:size(distgraph)[1])
+
     nodes = Int[1:length(flowamount)...]
-    open = falses(length(flowamount))
-    open[1] = true
 
     for i in 1:100000
 
+        open = falses(length(flowamount))
+        open[1] = true
         t = 30
         flow = 0
         dflow = 0
         loc = 1
         
-            for step in plan
+            while true
+                !any(distgraph[loc,:] .< t) && break
+                t < 1 && break
+
+                available = .!open .&& distgraph[loc,:] .< t
+
+                weights = Weights(flowamount .* (t .- distgraph[loc,:]) .* available)
+                step = sample(nodes,weights)
+                
                 dist = distgraph[loc,step]
-                dist+1 > t && break
                 flow += dflow*(dist+1)
                 dflow += flowamount[step]
+                open[step] = true
                 loc = step
                 t -= (dist+1)
+
             end
 
             flow += dflow*t
-
+            #flow == 1651 && println("max reached!")
             maxflow = max(flow,maxflow)
         end
 
