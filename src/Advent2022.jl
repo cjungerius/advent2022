@@ -2,7 +2,7 @@ module Advent2022
 
 using BenchmarkTools
 
-solvedDays = 1:24
+solvedDays = 1:25
 
 #include and export all solved days
 for day in solvedDays
