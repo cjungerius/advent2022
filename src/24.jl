@@ -2,7 +2,7 @@ module Day24
 
 using DataStructures
 
-function f(io="data/24.txt")
+function make_map(io="data/24.txt")
 
     input = readlines(io)
     valleyheight = length(input) - 2
@@ -75,6 +75,12 @@ function back_and_forth(accessible)
     phase_b, steps_b = bfs(accessible, (fy, fx, phase_a), (1, 2))
     phase_c, steps_c = bfs(accessible, (1, 2, phase_b), (fy, fx))
     steps_a, +(steps_a, steps_b, steps_c)
+end
+
+function solutions(io::String=joinpath(@__DIR__, "..", "data", "24.txt"))
+    ispath(io) || (io = IOBuffer(io))
+    accessible = make_map(io)
+    partone, parttwo = back_and_forth(accessible)
 end
 
 end
